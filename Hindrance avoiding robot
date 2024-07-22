@@ -1,0 +1,117 @@
+
+#define echoPin D2 // attach pin D2 Arduino to pin Echo of HC-SR04
+#define trigPin D1 //attach pin D3 Arduino to pin Trig of HC-SR04
+const int left_for = D5;  // gnd 1st pin  l293d  
+const int left_back =D6;   // power 2nd pin
+const int right_for = D7; //power 3rd pin
+const int right_back = D8; // gnd 4th pin
+
+
+// defines variables
+long duration; // variable for the duration of sound wave travel
+int distance; // variable for the distance measurement
+
+void setup() {
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
+  pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
+  Serial.begin(9600); // // Serial Communication is starting with 9600 of baudrate speed
+  Serial.println("Ultrasonic Sensor HC-SR04 Test"); // print some text in Serial Monitor
+  Serial.println("with Arduino UNO R3");
+   pinMode(left_for, OUTPUT);
+  pinMode(left_back, OUTPUT);
+  pinMode(right_for, OUTPUT);
+  pinMode(right_back, OUTPUT);
+ 
+}
+void loop() {
+  // Clears the trigPin condition
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  // Calculating the distance
+  distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
+  // Displays the distance on the Serial Monitor
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  if (distance < 20) //black
+    {
+      
+      stopfn();
+      delay(1000);
+      right();
+      delay(1000);
+      forward();
+      delay(1000);
+      left();
+      delay(1000);
+    }
+
+    else {
+      forward();
+     
+    }
+    }
+
+
+void  forward()
+{
+  digitalWrite(right_for, HIGH);
+  digitalWrite(right_back, LOW);
+  digitalWrite(left_back, LOW);
+  digitalWrite(left_for, HIGH);
+  delay(200);
+}
+
+void backward()
+{
+
+  digitalWrite(right_for, LOW);
+  digitalWrite(right_back, HIGH);
+  digitalWrite(left_back, HIGH);
+  digitalWrite(left_for, LOW);
+  delay(200);
+  digitalWrite(left_back, LOW);
+  digitalWrite(right_back, LOW);
+  delay(200);
+}
+
+void right()
+{
+  //  Serial.println("RIGHT");
+  digitalWrite(right_for, LOW);
+  digitalWrite(right_back, HIGH);
+  digitalWrite(left_back, LOW);
+  digitalWrite(left_for, HIGH);
+  delay(200);
+  digitalWrite(left_for, LOW);
+  digitalWrite(right_back, LOW);
+  delay(200);
+}
+
+void left()
+{
+  digitalWrite(right_for, HIGH);
+  digitalWrite(right_back, LOW);
+  digitalWrite(left_back, HIGH);
+  digitalWrite(left_for, LOW);
+  delay(200);
+  digitalWrite(left_back, LOW);
+  digitalWrite(right_for, LOW); 
+    delay(200);
+}
+
+void stopfn()
+{
+  digitalWrite(left_for, LOW);
+  digitalWrite(left_back, LOW);
+  digitalWrite(right_for, LOW);
+  digitalWrite(right_back, LOW);
+  Serial.print("STOP");
+
+}
